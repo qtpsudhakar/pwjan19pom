@@ -1,6 +1,7 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, errors } from '@playwright/test';
 import { DashboardPage } from './DashboardPage';
 import { BasePage } from './BasePage';
+import { safeFill } from '@utils/webhelpers';
 
 /**
  * LoginPage - encapsulates all interactions on the Login page.
@@ -12,19 +13,27 @@ export class LoginPage extends BasePage {
     private readonly passwordInput: Locator;
     private readonly loginButton: Locator;
     private readonly errorMessage: Locator;
+    private readonly submitButton: Locator;
+    private readonly signInButton: Locator;
 
     constructor(page: Page) {
         super(page); // Call the constructor of BasePage to initialize the page property
         // Locators for the login page elements
-        this.usernameInput = this.page.getByRole('textbox', { name: 'Username' }).describe("Username input field");
+        this.usernameInput = this.page.getByRole('textbox').describe("Username input field");
         this.passwordInput = this.page.getByRole('textbox', { name: 'Password' }).describe("Password input field");
         this.loginButton = this.page.getByRole('button', { name: 'Login' }).describe("Login button");
         this.errorMessage = this.page.getByText('Invalid credentials').describe("Error message for invalid login");
+
+        this.submitButton = this.page.locator("//input[@id='Login'] | //input[@id='Submit']")
+            .describe("Submit button on Dashboard page");
+
+        this.signInButton = this.page.getByRole('button', { name: 'Submit' })
+            .or(this.page.getByRole('button', { name: 'Sign In' }))
+            .describe("Sign In button for login");
     }
 
     async enterUsername(username: string): Promise<void> {
-        await this.usernameInput.fill(username);
-        console.log(`Filled username: ${username} in ${this.usernameInput.description()}`);
+        await safeFill(this.usernameInput, username);
     }
 
     async enterPassword(password: string): Promise<void> {

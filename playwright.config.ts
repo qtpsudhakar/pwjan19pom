@@ -41,7 +41,7 @@ export default defineConfig({
   use: {
     headless:false,
     // Base URL for all tests
-    baseURL: process.env.BASE_URL || 'https://vibetestq-osondemand.orangehrm.com/auth/login',
+    baseURL: process.env.BASE_URL || 'https://vibetestqpr-trials80.orangehrmlive.com',
 
     // Collect trace on first retry
     trace: 'on-first-retry',
