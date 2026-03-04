@@ -12,17 +12,14 @@ export class AddEmployeePage extends BasePage {
         this.btnSave = this.page.getByRole('button', { name: 'Save' }).describe("Save button");
     }
     async enterFirstName(firstName: string) {
-        await this.txtFirstName.fill(firstName);
-        console.log(`Filled first name: ${firstName} in ${this.txtFirstName.description()}`);
+        await this.webHelpers.enterText(this.txtFirstName, firstName);
     }
 
     async enterLastName(lastName: string) {
-        await this.txtLastName.fill(lastName);
-        console.log(`Filled last name: ${lastName} in ${this.txtLastName.description()}`);
+        await this.webHelpers.enterText(this.txtLastName, lastName);
     }
     async clickSave() {
-        await this.btnSave.click();
-        console.log(`Clicked on ${this.btnSave.description()}`);
+        await this.webHelpers.clickElement(this.btnSave);
     }
 
     async addEmployee(firstName: string, lastName: string) {

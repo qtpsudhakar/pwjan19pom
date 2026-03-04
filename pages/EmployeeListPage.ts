@@ -13,12 +13,12 @@ export class EmployeeListPage extends BasePage {
     }
 
     async clickAddButton() {
-        await this.btnAdd.click();
-        console.log(`Clicked on ${this.btnAdd.description()}`);
+        await this.webHelpers.clickElement(this.btnAdd);
     }
 
     async navigateToAddEmployee() {
-        await this.clickAddButton();
+        await this.webHelpers.clickElement(this.btnAdd);
+        console.log(`Navigated to Add Employee page by clicking ${this.btnAdd.description()}`);
     }
 
 }

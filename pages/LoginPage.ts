@@ -1,7 +1,7 @@
 import { Page, Locator, expect, errors } from '@playwright/test';
 import { DashboardPage } from './DashboardPage';
 import { BasePage } from './BasePage';
-import { safeFill } from '@utils/webhelpers';
+import { WebHelpers } from '@utils/webhelpers';
 
 /**
  * LoginPage - encapsulates all interactions on the Login page.
@@ -19,7 +19,7 @@ export class LoginPage extends BasePage {
     constructor(page: Page) {
         super(page); // Call the constructor of BasePage to initialize the page property
         // Locators for the login page elements
-        this.usernameInput = this.page.getByRole('textbox').describe("Username input field");
+        this.usernameInput = this.page.getByRole('textbox',{name: 'Username'}).describe("Username input field");
         this.passwordInput = this.page.getByRole('textbox', { name: 'Password' }).describe("Password input field");
         this.loginButton = this.page.getByRole('button', { name: 'Login' }).describe("Login button");
         this.errorMessage = this.page.getByText('Invalid credentials').describe("Error message for invalid login");
@@ -33,17 +33,15 @@ export class LoginPage extends BasePage {
     }
 
     async enterUsername(username: string): Promise<void> {
-        await safeFill(this.usernameInput, username);
+        await this.webHelpers.enterText(this.usernameInput, username);
     }
 
     async enterPassword(password: string): Promise<void> {
-        await this.passwordInput.fill(password);
-        console.log(`Filled password: ${password} in ${this.passwordInput.description()}`);
+        await this.webHelpers.enterText(this.passwordInput, password);
     }
 
     async clickLogin(): Promise<void> {
-        await this.loginButton.click();
-        console.log(`Clicked on ${this.loginButton.description()}`);
+        await this.webHelpers.clickElement(this.loginButton);
     }
 
     // Actions

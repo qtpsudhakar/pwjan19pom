@@ -17,8 +17,7 @@ export class DashboardPage extends BasePage {
     }
 
     async navigateToEmployeeList() {
-        await this.lnkPIM.click();
-        console.log(`Clicked on ${this.lnkPIM.description()}`);
+        await this.webHelpers.clickElement(this.lnkPIM);
     }
 
 }

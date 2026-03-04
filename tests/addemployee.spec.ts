@@ -21,19 +21,19 @@ test('Add Employee Tests', async ({ page }) => {
 
     // Navigate to login page and perform login
     await basePage.navigateTo('/');
-    await loginPage.login('nagesh', 'Nagesh@123');
+    await loginPage.login('testadmin', 'Vibetestq@123');
 
-    // // Verify that we are on the Dashboard page
-    // await dashboardPage.verifyDashboardPageExists();
+    // Verify that we are on the Dashboard page
+    await dashboardPage.verifyDashboardPageExists();
 
-    // // Navigate to Employee List
-    // await dashboardPage.navigateToEmployeeList();
+    // Navigate to Employee List
+    await dashboardPage.navigateToEmployeeList();
 
-    // // Click on Add button to go to Add Employee page
-    // await employeeListPage.navigateToAddEmployee();
+    // Click on Add button to go to Add Employee page
+    await employeeListPage.navigateToAddEmployee();
 
-    // // Fill in employee details and save
-    // await addEmployeePage.addEmployee('John', 'Doe');
+    // Fill in employee details and save
+    await addEmployeePage.addEmployee('bharath', 'jayam');
 
 
 });
