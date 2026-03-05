@@ -15,37 +15,40 @@ export const test = baseTest.extend<{
     addEmployeePage: AddEmployeePage;
     employeeListPage: EmployeeListPage;
     forEachTest: void; // Example of a fixture variable that can be used in tests
-    forEachWorker: void; // Example of a fixture variable that can be used in worker scope
-}>({
-    // Define fixture functionality here
-    basePage: async ({ page }, use) => {
-        const basePage = new BasePage(page);
-        await use(basePage);
-    },
-    loginPage: async ({ page }, use) => {
-        const loginPage = new LoginPage(page);
-        await use(loginPage);
-    },
-    dashboardPage: async ({ page }, use) => {
-        const dashboardPage = new DashboardPage(page);
-        await use(dashboardPage);
-    },
-    addEmployeePage: async ({ page }, use) => {
-        const addEmployeePage = new AddEmployeePage(page);
-        await use(addEmployeePage);
-    },
-    employeeListPage: async ({ page }, use) => {
-        const employeeListPage = new EmployeeListPage(page);
-        await use(employeeListPage);
-    },
+},
+    { forEachWorker: void }>({
+        // Define fixture functionality here
+        basePage: async ({ page }, use) => {
+            const basePage = new BasePage(page);
+            await use(basePage);
+        },
+        loginPage: async ({ page }, use) => {
+            const loginPage = new LoginPage(page);
+            await use(loginPage);
+        },
+        dashboardPage: async ({ page }, use) => {
+            const dashboardPage = new DashboardPage(page);
+            await use(dashboardPage);
+        },
+        addEmployeePage: async ({ page }, use) => {
+            const addEmployeePage = new AddEmployeePage(page);
+            await use(addEmployeePage);
+        },
+        employeeListPage: async ({ page }, use) => {
+            const employeeListPage = new EmployeeListPage(page);
+            await use(employeeListPage);
+        },
 
-    forEachTest: [async ({ page }, use) => {
-        const basePage = new BasePage(page);
-        await basePage.navigateTo('/');
-        const loginPage = new LoginPage(page);
-        await loginPage.login('testadmin', 'Vibetestq@123');
-        await use();
-    }, { scope: 'test', auto: true }],
+        forEachTest: [async ({ page }, use) => {
+            const basePage = new BasePage(page);
+            await basePage.navigateTo('/');
+            const loginPage = new LoginPage(page);
+            await loginPage.login('testadmin', 'Vibetestq@123');
+            await use();
+        }, { scope: 'test', auto: true }],
 
-}
-);
+        forEachWorker: [async ({ }, use) => {
+            console.log('This runs once per worker');
+            await use();
+        }, { scope: 'worker', auto: true }],
+    });
