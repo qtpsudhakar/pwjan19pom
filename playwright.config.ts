@@ -7,7 +7,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   // Directory containing the tests
   testDir: './tests',
-
+  // tag: ['@smoke', '@employee', '@login'], // Example of global tags that can be used in tests
   // Glob pattern to match test files
   testMatch: '**/*.spec.ts',
 

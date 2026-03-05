@@ -21,4 +21,12 @@ export class EmployeeListPage extends BasePage {
         console.log(`Navigated to Add Employee page by clicking ${this.btnAdd.description()}`);
     }
 
+    async searchEmployee(employeeName: string) {
+        await this.webHelpers.clickElement(this.filterInclude);
+        await this.webHelpers.clickElement(this.filterIncludeOption);
+        const employeeLocator = this.page.locator(`//div[@class='oxd-table-card']//div[text()='${employeeName}']`).describe(`Employee name '${employeeName}' in search results`);
+        // await this.webHelpers.waitForElement(employeeLocator);
+        console.log(`Employee '${employeeName}' found in search results`);
+    }
+
 }

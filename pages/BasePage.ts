@@ -25,4 +25,8 @@ export class BasePage {
         await this.page.waitForLoadState('load');
         console.log(`Page has fully loaded`);
     }
+    async closeBrowser(): Promise<void> {
+        await this.page.close();
+        console.log(`Browser closed successfully`);
+    }
 }

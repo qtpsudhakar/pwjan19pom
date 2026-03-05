@@ -14,6 +14,8 @@ export const test = baseTest.extend<{
     dashboardPage: DashboardPage;
     addEmployeePage: AddEmployeePage;
     employeeListPage: EmployeeListPage;
+    forEachTest: void; // Example of a fixture variable that can be used in tests
+    forEachWorker: void; // Example of a fixture variable that can be used in worker scope
 }>({
     // Define fixture functionality here
     basePage: async ({ page }, use) => {
@@ -35,5 +37,15 @@ export const test = baseTest.extend<{
     employeeListPage: async ({ page }, use) => {
         const employeeListPage = new EmployeeListPage(page);
         await use(employeeListPage);
-    }
-});
+    },
+
+    forEachTest: [async ({ page }, use) => {
+        const basePage = new BasePage(page);
+        await basePage.navigateTo('/');
+        const loginPage = new LoginPage(page);
+        await loginPage.login('testadmin', 'Vibetestq@123');
+        await use();
+    }, { scope: 'test', auto: true }],
+
+}
+);
