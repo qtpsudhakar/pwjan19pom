@@ -1,5 +1,6 @@
 import { before, beforeEach } from 'node:test';
 import { test } from '../fixtures/basetest';
+import * as data from '../test-data/employeeData.json';
 
 // test.describe.configure({ mode: 'serial' });
 
@@ -23,24 +24,26 @@ test.describe('Add Employee Tests', () => {
         await basePage.closeBrowser();
     });
 
-    test('Add Employee Tests', { tag: ['@smoke', '@employee'] }, async ({ basePage, loginPage, dashboardPage, employeeListPage, addEmployeePage }) => {
-        // Navigate to login page and perform login
-        // await basePage.navigateTo('/');
-        // await loginPage.login('testadmin', 'Vibetestq@123');
+    data.employees.forEach(employee => {
+        test(`Add Employee: ${employee.firstName} ${employee.lastName}`, { tag: ['@smoke', '@employee'] }, async ({ basePage, loginPage, dashboardPage, employeeListPage, addEmployeePage }) => {
+            // Navigate to login page and perform login
+            // await basePage.navigateTo('/');
+            // await loginPage.login('testadmin', 'Vibetestq@123');
 
-        // Verify that we are on the Dashboard page
-        await dashboardPage.verifyDashboardPageExists();
+            // Verify that we are on the Dashboard page
+            await dashboardPage.verifyDashboardPageExists();
 
-        // Navigate to Employee List
-        await dashboardPage.navigateToEmployeeList();
+            // Navigate to Employee List
+            await dashboardPage.navigateToEmployeeList();
 
-        // Click on Add button to go to Add Employee page
-        await employeeListPage.navigateToAddEmployee();
+            // Click on Add button to go to Add Employee page
+            await employeeListPage.navigateToAddEmployee();
 
-        // Fill in employee details and save
-        await addEmployeePage.addEmployee('John', 'Doe');
+            // Fill in employee details and save
+            await addEmployeePage.addEmployee(employee.firstName, employee.lastName);
 
-        await addEmployeePage.verifySuccessMessage('Successfully Saved');
+            await addEmployeePage.verifySuccessMessage('Successfully Saved');
+        });
     });
 
     test('Search Employee Test', { tag: ['@smoke', '@employee'] }, async ({ basePage, loginPage, dashboardPage, employeeListPage }) => {

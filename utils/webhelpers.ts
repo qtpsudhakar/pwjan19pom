@@ -11,6 +11,7 @@ export class WebHelpers {
     async enterText(locator: Locator, value: string): Promise<void> {
         // This is a wrapper function for entering text
         try {
+            await locator.clear(); // Clear the input before filling, this can help with strict mode issues
             await locator.fill(value);
             console.log(`Filled value: ${value} in ${locator.description()}`);
         } catch (error: any) {
