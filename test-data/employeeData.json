@@ -12,5 +12,15 @@
         "firstName": "Srinivas",
         "lastName": "ch"
         }
+    ],
+    "users": [
+        {
+        "username": "Admin",
+        "password": "admin123"
+        },
+        {
+        "username": "testAdmin",
+        "password": "Vibetestq@123"
+        }
     ]
 }

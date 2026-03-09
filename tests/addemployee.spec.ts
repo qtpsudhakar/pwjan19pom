@@ -20,10 +20,16 @@ test.describe('Add Employee Tests', () => {
     // });
 
     test.afterEach(async ({ basePage }) => {
+        
+        console.log(test.info().title);
         await basePage.closeBrowser();
     });
 
-    test('Add Employee Tests', { tag: ['@smoke', '@employee'] }, async ({ basePage, loginPage, dashboardPage, employeeListPage, addEmployeePage }) => {
+    test('Add Employee Tests', 
+        { tag: ['@smoke', '@employee'], 
+            annotation:[{type: 'issue', description: 'Add Employee Test'},{type: 'testId', description: 'EMP-001'}] 
+        },
+         async ({ basePage, loginPage, dashboardPage, employeeListPage, addEmployeePage }) => {
         // Navigate to login page and perform login
         // await basePage.navigateTo('/');
         // await loginPage.login('testadmin', 'Vibetestq@123');
@@ -36,7 +42,7 @@ test.describe('Add Employee Tests', () => {
 
         // Click on Add button to go to Add Employee page
         await employeeListPage.navigateToAddEmployee();
-
+        
         // Fill in employee details and save
         await addEmployeePage.addEmployee('John', 'Doe');
 

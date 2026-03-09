@@ -14,11 +14,12 @@ export class AssertHelpers {
   }
 
   async assertTextVisible(expectedText: string): Promise<void> {
+    
     let locator = this.page.locator(`text=${expectedText}`).describe(`Locator for text "${expectedText}"`);
     await expect(locator).toBeVisible();
     console.log(`Assertion passed: text "${expectedText}" is visible on the page`);
   }
-  
+
   async assertHidden(locator: Locator): Promise<void> {
     await expect(locator).toBeHidden();
     console.log(`Assertion passed: ${locator.description()} is hidden`);
