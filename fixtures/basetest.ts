@@ -41,8 +41,8 @@ export const test = baseTest.extend<{
     forEachTest: [async ({ page }, use) => {
         const basePage = new BasePage(page);
         await basePage.navigateTo('/');
-        const loginPage = new LoginPage(page);
-        await loginPage.login('testadmin', 'Vibetestq@123');
+        // const loginPage = new LoginPage(page);
+        // await loginPage.login('testadmin', 'Vibetestq@123');
         await use();
     }, { scope: 'test', auto: true }],
 
