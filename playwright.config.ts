@@ -41,8 +41,8 @@ export default defineConfig({
   use: {
     headless: false,
     // Base URL for all tests
-    baseURL: process.env.BASE_URL || 'https://vibetestq-osondemand.orangehrm.com/',
-
+    // baseURL: process.env.BASE_URL || 'https://vibetestq-osondemand.orangehrm.com/',
+      baseURL: process.env.BASE_URL || 'http://localhost:3000/',
     // Collect trace on first retry
     trace: 'on-first-retry',
 
@@ -69,15 +69,16 @@ export default defineConfig({
   // Output directory for test artifacts
   outputDir: 'test-results/',
 
-  globalSetup: './global-setup.ts',
-  globalTeardown: './global-teardown.ts',
+  // globalSetup: './global-setup.ts',
+  // globalTeardown: './global-teardown.ts',
 
   // Browser projects
   projects: [
     {
       name: 'chromium',
       use: {
-        ...devices['Desktop Chrome'],
+        // channel: 'chrome',
+          ...devices['Desktop Chrome'],
         // storageState: '.auth/admin.json', // Use the saved auth state for Chromium
       }
     },
