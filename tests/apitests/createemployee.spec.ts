@@ -11,7 +11,7 @@ test.describe('Employee API - Create Employee',{tag:['@api','@post']}, () => {
         const response = await request.post('/employees', {
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': 'key-abc-123'
+                // 'X-API-Key': 'key-abc-123'
             },
             data: {
                 firstName: 'Sarah',

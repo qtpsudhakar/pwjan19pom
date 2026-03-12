@@ -11,7 +11,8 @@
     "test:chrome": "npx playwright test --project=chromium",
     "test:firefox": "npx playwright test --project=firefox",
     "test:webkit": "npx playwright test --project=webkit",
-    "codegen": "npx playwright codegen"
+    "codegen": "npx playwright codegen",
+    "start": "node src/server.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",

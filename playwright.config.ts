@@ -72,6 +72,12 @@ export default defineConfig({
   // globalSetup: './global-setup.ts',
   // globalTeardown: './global-teardown.ts',
 
+  // Run your local dev server before starting the tests
+  webServer: {
+    command: 'npm run start',
+    timeout: 120 * 1000,
+  },
+
   // Browser projects
   projects: [
     {
