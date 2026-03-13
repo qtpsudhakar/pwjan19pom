@@ -2,7 +2,15 @@
 import { test, expect } from '@playwright/test';
 
 // test.use({ baseURL: 'http://localhost:3000/' }); // Override baseURL for these tests if needed
-test.describe('Employee API - Create Employee',{tag:['@api','@post']}, () => {
+test.describe('Employee API - Create Employee', { tag: ['@api', '@post'] }, () => {
+    let authToken: string;
+
+    test.beforeAll(async ({ request }) => {
+        const response = await request.post('/auth/login', {
+            data: { username: 'admin_user', password: 'admin_pass' },
+        });
+        authToken = (await response.json()).token;
+    });
 
     test('POST /employees — creates a new employee', async ({ request }) => {
 
@@ -10,6 +18,7 @@ test.describe('Employee API - Create Employee',{tag:['@api','@post']}, () => {
         const uniqueEmail = `sarah.connor+${Date.now()}@company.com`;
         const response = await request.post('/employees', {
             headers: {
+                Authorization: `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
                 // 'X-API-Key': 'key-abc-123'
             },
@@ -42,6 +51,7 @@ test.describe('Employee API - Create Employee',{tag:['@api','@post']}, () => {
     test('POST /employees — returns 400 when email is missing', async ({ request }) => {
         const response = await request.post('/employees', {
             headers: {
+                Authorization: `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
             },
             data: {
@@ -62,6 +72,7 @@ test.describe('Employee API - Create Employee',{tag:['@api','@post']}, () => {
 
     test('POST /employees — returns 400 for invalid department', async ({ request }) => {
         const response = await request.post('/employees', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Bad',
                 lastName: 'Dept',
@@ -82,6 +93,7 @@ test.describe('Employee API - Create Employee',{tag:['@api','@post']}, () => {
 
         // Create the first employee
         await request.post('/employees', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'First',
                 lastName: 'Employee',
@@ -93,6 +105,7 @@ test.describe('Employee API - Create Employee',{tag:['@api','@post']}, () => {
 
         // Attempt to create a second with the same email
         const response = await request.post('/employees', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Second',
                 lastName: 'Employee',

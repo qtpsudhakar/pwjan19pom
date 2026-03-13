@@ -4,6 +4,10 @@ import { defineConfig, devices } from '@playwright/test';
  * Playwright configuration file.
  * See https://playwright.dev/docs/test-configuration
  */
+
+const runId = new Date().toISOString().replace(/[:.]/g, '-');
+const runOutputDir = `test-results/pwreport-${runId}`;
+
 export default defineConfig({
   // Directory containing the tests
   testDir: './tests',
@@ -34,9 +38,10 @@ export default defineConfig({
   // Reporter configuration
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['html', { outputFolder: `${runOutputDir}/html-report`, open: 'never' }],
   ],
 
+  outputDir: runOutputDir,
   // Shared settings for all projects
   use: {
     headless: false,
@@ -66,8 +71,6 @@ export default defineConfig({
     storageState: '.auth/admin.json', // Use the saved auth state for all tests
   },
 
-  // Output directory for test artifacts
-  outputDir: 'test-results/',
 
   // globalSetup: './global-setup.ts',
   // globalTeardown: './global-teardown.ts',

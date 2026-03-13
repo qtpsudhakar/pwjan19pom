@@ -1,12 +1,23 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['@api', '@put', '@patch'] }, () => {
+    let authToken: string;
+
+    test.beforeAll(async ({ request }) => {
+        const response = await request.post('/auth/login', {
+            data: { username: 'admin_user', password: 'admin_pass' },
+        });
+        authToken = (await response.json()).token;
+    });
+
     test('PUT /employees/:id — updates the employee role', async ({ request }) => {
+        const email = `sarah.put.${Date.now()}@company.com`;
         const createResponse = await request.post('/employees', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Sarah',
                 lastName: 'Connor',
-                email: 'sarah.put@company.com',
+                email,
                 department: 'Engineering',
                 role: 'Senior Engineer',
             },
@@ -15,10 +26,11 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
         // PUT requires ALL fields — only role is different here
         const updateResponse = await request.put(`/employees/${created.id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Sarah',
                 lastName: 'Connor',
-                email: 'sarah.put@company.com',
+                email,
                 department: 'Engineering',
                 role: 'Staff Engineer',
             },
@@ -34,10 +46,11 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
     test('PUT /employees/:id — data loss when omitting fields', async ({ request }) => {
         const createResponse = await request.post('/employees', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Tony',
                 lastName: 'Stark',
-                email: 'tony.puttest@company.com',
+                email: `tony.puttest.${Date.now()}@company.com`,
                 department: 'Engineering',
                 role: 'Senior Engineer',
             },
@@ -46,6 +59,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
         // Only send role — all other fields will become undefined
         const updateResponse = await request.put(`/employees/${id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 role: 'Staff Engineer',   // incomplete PUT — data loss
             },
@@ -60,6 +74,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
     test('PUT /employees/:id — 404 for non-existent employee', async ({ request }) => {
         const response = await request.put('/employees/emp-999', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Ghost',
                 lastName: 'Employee',
@@ -74,10 +89,11 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
     test('PATCH /employees/:id — updates only the specified field', async ({ request }) => {
         const createResponse = await request.post('/employees', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Tony',
                 lastName: 'Stark',
-                email: 'tony.stark@company.com',
+                email: `tony.stark.${Date.now()}@company.com`,
                 department: 'Engineering',
                 role: 'Senior Engineer',
             },
@@ -86,6 +102,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
         // PATCH — only change role
         const patchResponse = await request.patch(`/employees/${created.id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: { role: 'Principal Engineer' },
         });
 
@@ -98,7 +115,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
         // Everything else must be unchanged — this is the PATCH guarantee
         expect(body.firstName).toBe('Tony');
-        expect(body.email).toBe('tony.stark@company.com');
+        expect(body.email).toBe(created.email);
         expect(body.department).toBe('Engineering');
         expect(body.id).toBe(created.id);
         expect(body.createdAt).toBe(created.createdAt);
@@ -106,10 +123,11 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
     test('PATCH /employees/:id — 400 for invalid department', async ({ request }) => {
         const createResponse = await request.post('/employees', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Bruce',
                 lastName: 'Banner',
-                email: 'bruce.banner@company.com',
+                email: `bruce.banner.${Date.now()}@company.com`,
                 department: 'Engineering',
                 role: 'Research Scientist',
             },
@@ -117,6 +135,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
         const { id } = await createResponse.json();
 
         const response = await request.patch(`/employees/${id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: { department: 'Quantum Physics' },   // not a valid department
         });
 
@@ -128,6 +147,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
 
     test('PATCH /employees/:id — 404 for non-existent employee', async ({ request }) => {
         const response = await request.patch('/employees/emp-999', {
+            headers: { Authorization: `Bearer ${authToken}` },
             data: { role: 'Ghost' },
         });
 

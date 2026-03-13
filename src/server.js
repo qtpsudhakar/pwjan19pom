@@ -1,13 +1,73 @@
 // server.js
 
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const app = express();
 
 // Parse incoming request bodies as JSON.
 // Without this line, req.body is always undefined on POST and PUT requests.
-
-
 app.use(express.json());
+
+// ---------------------------------------------------------------------------
+// JWT configuration
+// In production, set JWT_SECRET via an environment variable — never hard-code.
+// ---------------------------------------------------------------------------
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key-change-in-production';
+const JWT_EXPIRES_IN = '1h';
+
+// In-memory user store (a real app would use a database with hashed passwords).
+const USERS = [
+  { username: 'standard_user', password: 'secret_sauce', displayName: 'Standard User' },
+  { username: 'admin_user',    password: 'admin_pass',   displayName: 'Admin User' },
+];
+
+// ---------------------------------------------------------------------------
+// Token authentication middleware
+// Expects:  Authorization: Bearer <token>
+// ---------------------------------------------------------------------------
+function requireToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+  }
+
+  const token = authHeader.slice(7); // strip "Bearer "
+
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// POST /auth/login — exchange credentials for a JWT
+// ---------------------------------------------------------------------------
+app.post('/auth/login', (req, res) => {
+  const { username, password } = req.body || {};
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'username and password are required' });
+  }
+
+  const user = USERS.find(u => u.username === username && u.password === password);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  const token = jwt.sign(
+    { username: user.username, displayName: user.displayName },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+
+  res.status(200).json({ token });
+});
+
+// Protect all /employees routes with token authentication.
+app.use('/employees', requireToken);
 
 // In-memory storage.
 // This array resets every time you restart the server.
@@ -199,8 +259,6 @@ app.delete('/employees/:id', (req, res) => {
   res.status(204).send();      // 204 = success, no body
 });
 
-
-// Endpoints go here — added in later chapters
 
 app.listen(3000, () => {
   console.log('Employee API running at http://localhost:3000');
