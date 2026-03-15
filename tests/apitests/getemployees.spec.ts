@@ -1,17 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/apitest';
 
 
 test.describe('GET /employees API tests', { tag: ['@api', '@get'] }, () => {
-    let authToken: string;
 
-    test.beforeAll(async ({ request }) => {
-        const response = await request.post('/auth/login', {
-            data: { username: 'admin_user', password: 'admin_pass' },
-        });
-        authToken = (await response.json()).token;
-    });
-
-    test('GET /employees — returns an array', async ({ request }) => {
+    test('GET /employees — returns an array', async ({ request, authToken }) => {
         const response = await request.get('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
         });
@@ -22,7 +14,7 @@ test.describe('GET /employees API tests', { tag: ['@api', '@get'] }, () => {
         expect(Array.isArray(body)).toBe(true);
     });
 
-    test('GET /employees — returns empty array when no employees exist', async ({ request }) => {
+    test('GET /employees — returns empty array when no employees exist', async ({ request, authToken }) => {
         const response = await request.get('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
         });
@@ -34,7 +26,7 @@ test.describe('GET /employees API tests', { tag: ['@api', '@get'] }, () => {
         // Array may be empty — that is valid
     });
 
-    test('GET /employees?department=Engineering — returns only Engineering employees', async ({ request }) => {
+    test('GET /employees?department=Engineering — returns only Engineering employees', async ({ request, authToken }) => {
         // Create test data first
         await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -63,7 +55,7 @@ test.describe('GET /employees API tests', { tag: ['@api', '@get'] }, () => {
         }
     });
 
-    test('GET /employees?department=engineering — case sensitivity returns empty array', async ({ request }) => {
+    test('GET /employees?department=engineering — case sensitivity returns empty array', async ({ request, authToken }) => {
         const response = await request.get('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
             params: { department: 'engineering' },   // lowercase — no match
@@ -75,7 +67,7 @@ test.describe('GET /employees API tests', { tag: ['@api', '@get'] }, () => {
         expect(body).toHaveLength(0);   // empty array, not 404
     });
 
-    test('GET /employees/:id — returns the correct employee', async ({ request }) => {
+    test('GET /employees/:id — returns the correct employee', async ({ request, authToken }) => {
         // Create an employee to get a known ID
         const createResponse = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -101,7 +93,7 @@ test.describe('GET /employees API tests', { tag: ['@api', '@get'] }, () => {
         expect(body.email).toBe(created.email);
     });
 
-    test('GET /employees/:id — returns 404 for non-existent ID', async ({ request }) => {
+    test('GET /employees/:id — returns 404 for non-existent ID', async ({ request, authToken }) => {
         const response = await request.get('/employees/emp-999', {
             headers: { Authorization: `Bearer ${authToken}` },
         });

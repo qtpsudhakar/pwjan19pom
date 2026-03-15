@@ -1,16 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/apitest';
 
 test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['@api', '@put', '@patch'] }, () => {
-    let authToken: string;
 
-    test.beforeAll(async ({ request }) => {
-        const response = await request.post('/auth/login', {
-            data: { username: 'admin_user', password: 'admin_pass' },
-        });
-        authToken = (await response.json()).token;
-    });
-
-    test('PUT /employees/:id — updates the employee role', async ({ request }) => {
+    test('PUT /employees/:id — updates the employee role', async ({ request, authToken }) => {
         const email = `sarah.put.${Date.now()}@company.com`;
         const createResponse = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -44,7 +36,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
         expect(body.createdAt).toBe(created.createdAt);  // must not change
     });
 
-    test('PUT /employees/:id — data loss when omitting fields', async ({ request }) => {
+    test('PUT /employees/:id — data loss when omitting fields', async ({ request, authToken }) => {
         const createResponse = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: {
@@ -72,7 +64,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
         expect(body.error).toBe('Validation failed');
     });
 
-    test('PUT /employees/:id — 404 for non-existent employee', async ({ request }) => {
+    test('PUT /employees/:id — 404 for non-existent employee', async ({ request, authToken }) => {
         const response = await request.put('/employees/emp-999', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: {
@@ -87,7 +79,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
         expect(response.status()).toBe(404);
     });
 
-    test('PATCH /employees/:id — updates only the specified field', async ({ request }) => {
+    test('PATCH /employees/:id — updates only the specified field', async ({ request, authToken }) => {
         const createResponse = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: {
@@ -121,7 +113,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
         expect(body.createdAt).toBe(created.createdAt);
     });
 
-    test('PATCH /employees/:id — 400 for invalid department', async ({ request }) => {
+    test('PATCH /employees/:id — 400 for invalid department', async ({ request, authToken }) => {
         const createResponse = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: {
@@ -145,7 +137,7 @@ test.describe('PUT /employees/:id and PATCH /employees/:id API tests', { tag: ['
         expect(body.details[0]).toContain('department must be one of');
     });
 
-    test('PATCH /employees/:id — 404 for non-existent employee', async ({ request }) => {
+    test('PATCH /employees/:id — 404 for non-existent employee', async ({ request, authToken }) => {
         const response = await request.patch('/employees/emp-999', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: { role: 'Ghost' },

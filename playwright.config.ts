@@ -41,7 +41,7 @@ export default defineConfig({
     ['html', { outputFolder: `${runOutputDir}/html-report`, open: 'never' }],
   ],
 
-  outputDir: runOutputDir,
+  outputDir: `${runOutputDir}/artifacts`,
   // Shared settings for all projects
   use: {
     headless: false,

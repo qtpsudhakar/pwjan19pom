@@ -1,18 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/apitest';
 
 
 test.describe('DELETE /employees/:id API tests', { tag: ['@api', '@delete'] }, () => {
-    let authToken: string;
 
-    test.beforeAll(async ({ request }) => {
-        const response = await request.post('/auth/login', {
-            data: { username: 'admin_user', password: 'admin_pass' },
-        });
-        authToken = (await response.json()).token;
-    });
-
-    test('DELETE /employees/:id — removes the employee', async ({ request }) => {
+    test('DELETE /employees/:id — removes the employee', async ({ request, authToken }) => {
         const createResponse = await request.post('/employees', {
+            
             headers: { Authorization: `Bearer ${authToken}` },
             data: {
                 firstName: 'Temp',
@@ -39,7 +32,7 @@ test.describe('DELETE /employees/:id API tests', { tag: ['@api', '@delete'] }, (
         expect(getResponse.status()).toBe(404);
     });
 
-    test('DELETE /employees/:id — 404 for non-existent ID', async ({ request }) => {
+    test('DELETE /employees/:id — 404 for non-existent ID', async ({ request, authToken }) => {
         const response = await request.delete('/employees/emp-999', {
             headers: { Authorization: `Bearer ${authToken}` },
         });
@@ -50,7 +43,7 @@ test.describe('DELETE /employees/:id API tests', { tag: ['@api', '@delete'] }, (
         expect(body.error).toBe('Employee not found');
     });
 
-    test('DELETE /employees/:id — 404 on second delete attempt', async ({ request }) => {
+    test('DELETE /employees/:id — 404 on second delete attempt', async ({ request, authToken }) => {
         const createResponse = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: {
@@ -76,7 +69,7 @@ test.describe('DELETE /employees/:id API tests', { tag: ['@api', '@delete'] }, (
         expect(secondDelete.status()).toBe(404);
     });
 
-    test('DELETE /employees/:id — employee is gone from GET /employees list', async ({ request }) => {
+    test('DELETE /employees/:id — employee is gone from GET /employees list', async ({ request, authToken }) => {
         const createResponse = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: {

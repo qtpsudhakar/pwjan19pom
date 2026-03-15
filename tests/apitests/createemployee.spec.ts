@@ -1,18 +1,10 @@
 // tests/employees.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/apitest';
 
 // test.use({ baseURL: 'http://localhost:3000/' }); // Override baseURL for these tests if needed
 test.describe('Employee API - Create Employee', { tag: ['@api', '@post'] }, () => {
-    let authToken: string;
 
-    test.beforeAll(async ({ request }) => {
-        const response = await request.post('/auth/login', {
-            data: { username: 'admin_user', password: 'admin_pass' },
-        });
-        authToken = (await response.json()).token;
-    });
-
-    test('POST /employees — creates a new employee', async ({ request }) => {
+    test('POST /employees — creates a new employee', async ({ request, authToken }) => {
 
         // Create new email to avoid conflicts with existing data
         const uniqueEmail = `sarah.connor+${Date.now()}@company.com`;
@@ -48,7 +40,7 @@ test.describe('Employee API - Create Employee', { tag: ['@api', '@post'] }, () =
         expect(body.department).toBe('Engineering');
     });
 
-    test('POST /employees — returns 400 when email is missing', async ({ request }) => {
+    test('POST /employees — returns 400 when email is missing', async ({ request, authToken }) => {
         const response = await request.post('/employees', {
             headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -70,7 +62,7 @@ test.describe('Employee API - Create Employee', { tag: ['@api', '@post'] }, () =
         expect(body.details).toContain('email is required');
     });
 
-    test('POST /employees — returns 400 for invalid department', async ({ request }) => {
+    test('POST /employees — returns 400 for invalid department', async ({ request, authToken }) => {
         const response = await request.post('/employees', {
             headers: { Authorization: `Bearer ${authToken}` },
             data: {
@@ -88,7 +80,7 @@ test.describe('Employee API - Create Employee', { tag: ['@api', '@post'] }, () =
         expect(body.details[0]).toContain('department must be one of');
     });
 
-    test('POST /employees — returns 400 for duplicate email', async ({ request }) => {
+    test('POST /employees — returns 400 for duplicate email', async ({ request, authToken }) => {
         const sharedEmail = 'duplicate@company.com';
 
         // Create the first employee
