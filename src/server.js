@@ -2,6 +2,7 @@
 
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const app = express();
 
 // Parse incoming request bodies as JSON.
@@ -22,8 +23,9 @@ const USERS = [
 ];
 
 // ---------------------------------------------------------------------------
-// Token authentication middleware
-// Expects:  Authorization: Bearer <token>
+// AUTH 1 — JWT Bearer Token middleware
+// Expects: Authorization: Bearer <token>
+// Tokens are issued by POST /auth/login
 // ---------------------------------------------------------------------------
 function requireToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -35,7 +37,12 @@ function requireToken(req, res, next) {
   const token = authHeader.slice(7); // strip "Bearer "
 
   try {
-    req.user = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, JWT_SECRET);
+    // Reject OAuth tokens — they belong to /oauth/employees only
+    if (payload.type === 'oauth2') {
+      return res.status(401).json({ error: 'Invalid token type' });
+    }
+    req.user = payload;
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });
@@ -43,7 +50,187 @@ function requireToken(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
-// POST /auth/login — exchange credentials for a JWT
+// AUTH 2 — HTTP Basic Auth middleware
+// Expects: Authorization: Basic base64(username:password)
+// ---------------------------------------------------------------------------
+function requireBasicAuth(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader || !authHeader.startsWith('Basic ')) {
+    return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+  }
+
+  const base64Credentials = authHeader.slice(6); // strip "Basic "
+  const decoded = Buffer.from(base64Credentials, 'base64').toString('utf8');
+
+  const colonIndex = decoded.indexOf(':');
+  if (colonIndex === -1) {
+    return res.status(401).json({ error: 'Invalid credentials format' });
+  }
+
+  const username = decoded.slice(0, colonIndex);
+  const password = decoded.slice(colonIndex + 1);
+
+  const user = USERS.find(u => u.username === username && u.password === password);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  req.user = { username: user.username, displayName: user.displayName };
+  next();
+}
+
+// ---------------------------------------------------------------------------
+// AUTH 3 — API Key middleware
+// Expects: x-api-key: <key>
+// ---------------------------------------------------------------------------
+const API_KEYS = {
+  'key-standard-abc123': 'Standard User',
+  'key-admin-xyz789':    'Admin User',
+};
+
+function requireApiKey(req, res, next) {
+  const apiKey = req.headers['x-api-key'];
+
+  if (!apiKey || !API_KEYS[apiKey]) {
+    return res.status(401).json({ error: 'Missing or invalid API key' });
+  }
+
+  req.user = { displayName: API_KEYS[apiKey] };
+  next();
+}
+
+// ---------------------------------------------------------------------------
+// AUTH 4 — OAuth 2.0 Client Credentials middleware
+// Expects: Authorization: Bearer <access_token>
+// Tokens are issued by POST /oauth/token (grant_type=client_credentials)
+// ---------------------------------------------------------------------------
+const OAUTH_CLIENTS = [
+  { clientId: 'test-client',  clientSecret: 'test-secret',  name: 'Test Application' },
+  { clientId: 'admin-client', clientSecret: 'admin-secret', name: 'Admin Application' },
+];
+
+function requireOAuthToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+  }
+
+  const token = authHeader.slice(7);
+
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    // Only accept tokens issued via /oauth/token
+    if (payload.type !== 'oauth2') {
+      return res.status(401).json({ error: 'Invalid token type' });
+    }
+    req.client = payload;
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// AUTH 5 — Session / Cookie
+// POST /session/login  → validates credentials, creates a session, sets Set-Cookie
+// POST /session/logout → destroys the session
+// Expects: Cookie: session_id=<id>  (sent automatically by the client after login)
+// ---------------------------------------------------------------------------
+const sessions = new Map(); // sessionId → { username, displayName }
+
+function parseCookies(cookieHeader) {
+  const cookies = {};
+  if (!cookieHeader) return cookies;
+  for (const part of cookieHeader.split(';')) {
+    const [key, ...rest] = part.trim().split('=');
+    cookies[key.trim()] = rest.join('=').trim();
+  }
+  return cookies;
+}
+
+function requireSession(req, res, next) {
+  const cookies = parseCookies(req.headers['cookie']);
+  const sessionId = cookies['session_id'];
+
+  if (!sessionId || !sessions.has(sessionId)) {
+    return res.status(401).json({ error: 'Not authenticated. Please log in.' });
+  }
+
+  req.session = sessions.get(sessionId);
+  next();
+}
+
+// ---------------------------------------------------------------------------
+// AUTH 6 — HMAC Signature
+// Client signs:  METHOD + '\n' + PATH + '\n' + TIMESTAMP  using a shared secret
+// Headers required:
+//   Authorization: HMAC-SHA256 Credential=<clientId>, Signature=<hex>
+//   x-timestamp:   <unix timestamp in seconds>
+// Server rejects requests whose timestamp is more than 5 minutes old.
+// ---------------------------------------------------------------------------
+const HMAC_CLIENTS = {
+  'client-abc': 'secret-key-abc',
+  'client-xyz': 'secret-key-xyz',
+};
+
+const HMAC_TOLERANCE_SECONDS = 300; // 5-minute replay-attack window
+
+function requireHmac(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const timestamp  = req.headers['x-timestamp'];
+
+  if (!authHeader || !authHeader.startsWith('HMAC-SHA256 ')) {
+    return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+  }
+
+  if (!timestamp) {
+    return res.status(401).json({ error: 'Missing x-timestamp header' });
+  }
+
+  // Parse  Credential=<id>, Signature=<hex>  from the header value
+  const params = {};
+  for (const part of authHeader.slice('HMAC-SHA256 '.length).split(',')) {
+    const eqIdx = part.indexOf('=');
+    if (eqIdx !== -1) {
+      params[part.slice(0, eqIdx).trim()] = part.slice(eqIdx + 1).trim();
+    }
+  }
+
+  const clientId  = params['Credential'];
+  const signature = params['Signature'];
+
+  if (!clientId || !signature) {
+    return res.status(401).json({ error: 'Malformed Authorization header' });
+  }
+
+  const secret = HMAC_CLIENTS[clientId];
+  if (!secret) {
+    return res.status(401).json({ error: 'Unknown client' });
+  }
+
+  // Reject requests whose timestamp is too far from the server clock
+  const now = Math.floor(Date.now() / 1000);
+  if (Math.abs(now - parseInt(timestamp, 10)) > HMAC_TOLERANCE_SECONDS) {
+    return res.status(401).json({ error: 'Request timestamp expired' });
+  }
+
+  // Recompute the expected signature and compare
+  const path = req.originalUrl.split('?')[0];
+  const stringToSign = `${req.method}\n${path}\n${timestamp}`;
+  const expected = crypto.createHmac('sha256', secret).update(stringToSign).digest('hex');
+
+  if (signature !== expected) {
+    return res.status(401).json({ error: 'Invalid signature' });
+  }
+
+  req.client = { clientId };
+  next();
+}
+
+// ---------------------------------------------------------------------------
+// POST /auth/login — exchange user credentials for a JWT (AUTH 1)
 // ---------------------------------------------------------------------------
 app.post('/auth/login', (req, res) => {
   const { username, password } = req.body || {};
@@ -66,52 +253,94 @@ app.post('/auth/login', (req, res) => {
   res.status(200).json({ token });
 });
 
-// Protect all /employees routes with token authentication.
-app.use('/employees', requireToken);
+// ---------------------------------------------------------------------------
+// POST /oauth/token — exchange client credentials for an access token (AUTH 4)
+// Supports grant_type=client_credentials only
+// ---------------------------------------------------------------------------
+app.post('/oauth/token', (req, res) => {
+  const { grant_type, client_id, client_secret } = req.body || {};
 
-// In-memory storage.
-// This array resets every time you restart the server.
-// A real application would use a database.
+  if (grant_type !== 'client_credentials') {
+    return res.status(400).json({ error: 'unsupported_grant_type' });
+  }
+
+  if (!client_id || !client_secret) {
+    return res.status(400).json({ error: 'client_id and client_secret are required' });
+  }
+
+  const client = OAUTH_CLIENTS.find(c => c.clientId === client_id && c.clientSecret === client_secret);
+  if (!client) {
+    return res.status(401).json({ error: 'invalid_client' });
+  }
+
+  const accessToken = jwt.sign(
+    { clientId: client.clientId, name: client.name, type: 'oauth2' },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+
+  res.status(200).json({
+    access_token: accessToken,
+    token_type: 'Bearer',
+    expires_in: 3600,
+  });
+});
+
+// ---------------------------------------------------------------------------
+// POST /session/login — create a session and set a cookie (AUTH 5)
+// ---------------------------------------------------------------------------
+app.post('/session/login', (req, res) => {
+  const { username, password } = req.body || {};
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'username and password are required' });
+  }
+
+  const user = USERS.find(u => u.username === username && u.password === password);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  const sessionId = crypto.randomBytes(32).toString('hex');
+  sessions.set(sessionId, { username: user.username, displayName: user.displayName });
+
+  res.setHeader('Set-Cookie', `session_id=${sessionId}; HttpOnly; Path=/`);
+  res.status(200).json({ message: 'Login successful', displayName: user.displayName });
+});
+
+// POST /session/logout — destroy the session (AUTH 5)
+app.post('/session/logout', (req, res) => {
+  const cookies = parseCookies(req.headers['cookie']);
+  const sessionId = cookies['session_id'];
+
+  if (sessionId) {
+    sessions.delete(sessionId);
+  }
+
+  res.setHeader('Set-Cookie', 'session_id=; HttpOnly; Path=/; Max-Age=0');
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
+// ---------------------------------------------------------------------------
+// In-memory storage — shared across all auth route groups.
+// Resets every time the server restarts.
+// ---------------------------------------------------------------------------
 let employees = [];
-// sample employee object:
-// {
-//   id: 'emp-001',
-//   firstName: 'Alice',
-//   lastName: 'Smith',
-//   email: 'alice.smith@company.com',
-//   department: 'Engineering',
-//   role: 'Engineer',
-//   createdAt: '2024-01-01T00:00:00.000Z'
-// }
-
-// employees.push({
-//   id: 'emp-001',
-//   firstName: 'Alice',
-//   lastName: 'Smith',
-//   email: 'test@gmail.com',
-//   department: 'Engineering',
-//   role: 'Engineer',
-//   createdAt: new Date().toISOString(),
-// });
-
-
 let nextId = 1;
 
-// Valid department names.
-// Any other value is rejected during validation.
+// Valid department names — any other value is rejected during validation.
 const VALID_DEPARTMENTS = ['Engineering', 'HR', 'Finance', 'Marketing'];
 
-// Shared validation function.
-// Called by POST and PUT before saving anything.
-// Returns an array of error messages. An empty array means all fields are valid.
+// Shared validation — called by POST and PUT before saving.
+// Returns an array of error messages; empty array means valid.
 function validateEmployee(data) {
   const errors = [];
 
-  if (!data.firstName) errors.push('firstName is required');
-  if (!data.lastName) errors.push('lastName is required');
-  if (!data.email) errors.push('email is required');
+  if (!data.firstName)  errors.push('firstName is required');
+  if (!data.lastName)   errors.push('lastName is required');
+  if (!data.email)      errors.push('email is required');
   if (!data.department) errors.push('department is required');
-  if (!data.role) errors.push('role is required');
+  if (!data.role)       errors.push('role is required');
 
   if (data.department && !VALID_DEPARTMENTS.includes(data.department)) {
     errors.push(`department must be one of: ${VALID_DEPARTMENTS.join(', ')}`);
@@ -120,29 +349,29 @@ function validateEmployee(data) {
   return errors;
 }
 
+// ---------------------------------------------------------------------------
+// Employee CRUD router — mounted at four paths, each protected by a
+// different auth middleware so students can practice each auth type
+// independently against the same API logic.
+// ---------------------------------------------------------------------------
+const employeeRouter = express.Router();
 
-// POST /employees — create a new employee
-app.post('/employees', (req, res) => {
+// POST / — create a new employee
+employeeRouter.post('/', (req, res) => {
   const data = req.body;
 
-  // Step 1: Validate all required fields
   const errors = validateEmployee(data);
   if (errors.length > 0) {
     return res.status(400).json({ error: 'Validation failed', details: errors });
   }
 
-  // Step 2: Reject duplicate email addresses
   const emailExists = employees.some(emp => emp.email === data.email);
   if (emailExists) {
-    return res.status(400).json({
-      error: 'Validation failed',
-      details: ['email already exists'],
-    });
+    return res.status(400).json({ error: 'Validation failed', details: ['email already exists'] });
   }
 
-  // Step 3: Build the full employee object with server-generated fields
   const newEmployee = {
-    id: `emp-${String(nextId).padStart(3, '0')}`,  // emp-001, emp-002, ...
+    id: `emp-${String(nextId).padStart(3, '0')}`,
     firstName: data.firstName,
     lastName: data.lastName,
     email: data.email,
@@ -152,31 +381,24 @@ app.post('/employees', (req, res) => {
   };
 
   nextId++;
-  employees.push(newEmployee); // Here we are mutating the in-memory array, which is fine for this simple example. In a real app, this would be a database insert.
-  // In real applications we store data in databases, and the database would generate the ID and createdAt fields for us. Here we are simulating that logic in our server code.
-  // Store data in DB: db.insert(newEmployee).then(saved => res.status(201).json(saved)).catch(err => res.status(500).json({ error: 'Database error', details: err.message }))
-
-  // Step 4: Return 201 with the created employee
+  employees.push(newEmployee);
   res.status(201).json(newEmployee);
 });
 
-
-// GET /employees — return all employees, with an optional department filter
-app.get('/employees', (req, res) => {
+// GET / — return all employees, with an optional ?department= filter
+employeeRouter.get('/', (req, res) => {
   const { department } = req.query;
 
   if (department) {
-    const filtered = employees.filter(emp => emp.department === department);
-    return res.status(200).json(filtered);
+    return res.status(200).json(employees.filter(emp => emp.department === department));
   }
 
   res.status(200).json(employees);
 });
 
-// GET /employees/:id — return a single employee by ID
-app.get('/employees/:id', (req, res) => {
+// GET /:id — return a single employee by ID
+employeeRouter.get('/:id', (req, res) => {
   const { id } = req.params;
-
   const employee = employees.find(emp => emp.id === id);
 
   if (!employee) {
@@ -186,8 +408,8 @@ app.get('/employees/:id', (req, res) => {
   res.status(200).json(employee);
 });
 
-// PUT /employees/:id — replace an employee record entirely
-app.put('/employees/:id', (req, res) => {
+// PUT /:id — replace an employee record entirely
+employeeRouter.put('/:id', (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -201,8 +423,7 @@ app.put('/employees/:id', (req, res) => {
     return res.status(400).json({ error: 'Validation failed', details: errors });
   }
 
-  // Full replacement — every field comes from the request body
-  // Only id and createdAt are preserved from the original record
+  // Full replacement — only id and createdAt are preserved from the original
   employees[index] = {
     id: employees[index].id,
     firstName: data.firstName,
@@ -216,8 +437,8 @@ app.put('/employees/:id', (req, res) => {
   res.status(200).json(employees[index]);
 });
 
-// PATCH /employees/:id — update only the fields provided
-app.patch('/employees/:id', (req, res) => {
+// PATCH /:id — update only the fields provided
+employeeRouter.patch('/:id', (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -235,29 +456,43 @@ app.patch('/employees/:id', (req, res) => {
 
   // Spread merge — keep all existing fields, overwrite only what was sent
   employees[index] = {
-    ...employees[index],   // keep everything
-    ...updates,            // overwrite only what was sent
-    id: employees[index].id,        // id can never change
+    ...employees[index],
+    ...updates,
+    id: employees[index].id,            // id can never change
     createdAt: employees[index].createdAt, // createdAt can never change
   };
 
   res.status(200).json(employees[index]);
 });
 
-// DELETE /employees/:id — remove an employee record
-app.delete('/employees/:id', (req, res) => {
+// DELETE /:id — remove an employee record
+employeeRouter.delete('/:id', (req, res) => {
   const { id } = req.params;
 
   const index = employees.findIndex(emp => emp.id === id);
-
   if (index === -1) {
     return res.status(404).json({ error: 'Employee not found', id });
   }
 
-  employees.splice(index, 1);  // remove the employee from the array
-
-  res.status(204).send();      // 204 = success, no body
+  employees.splice(index, 1);
+  res.status(204).send();
 });
+
+// ---------------------------------------------------------------------------
+// Mount the employee router with each auth middleware
+//   /employees         → AUTH 1: JWT Bearer token  (POST /auth/login)
+//   /basic/employees   → AUTH 2: HTTP Basic Auth
+//   /apikey/employees  → AUTH 3: API Key            (x-api-key header)
+//   /oauth/employees   → AUTH 4: OAuth 2.0          (POST /oauth/token)
+//   /session/employees → AUTH 5: Session / Cookie   (POST /session/login)
+//   /hmac/employees    → AUTH 6: HMAC Signature     (x-timestamp + Authorization: HMAC-SHA256)
+// ---------------------------------------------------------------------------
+app.use('/employees',         requireToken,      employeeRouter);
+app.use('/basic/employees',   requireBasicAuth,  employeeRouter);
+app.use('/apikey/employees',  requireApiKey,     employeeRouter);
+app.use('/oauth/employees',   requireOAuthToken, employeeRouter);
+app.use('/session/employees', requireSession,    employeeRouter);
+app.use('/hmac/employees',    requireHmac,       employeeRouter);
 
 
 app.listen(3000, () => {
