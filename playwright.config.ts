@@ -37,8 +37,19 @@ export default defineConfig({
 
   // Reporter configuration
   reporter: [
-    ['list'],
-    ['html', { outputFolder: `${runOutputDir}/html-report`, open: 'never' }],
+    // ['list',{printSteps: true}],
+    // ['line'],
+    // ['dot', { outputFile: `${runOutputDir}/dot-reporter.txt` }],
+    // ['html', { outputFolder: `${runOutputDir}/html-report`, open: 'never' }],
+    //  ['blob',{ outputFile: `${runOutputDir}/blob-reporter.txt` }],
+    // ['json', { outputFile: `${runOutputDir}/json-reporter.json` }],
+    // ['junit', { outputFile: `${runOutputDir}/junit-reporter.xml` }],
+    // ['./my-awesome-reporter.ts'],
+    // ['allure-playwright'],
+    ['monocart-reporter', {  
+            name: "My Test Report",
+            outputFile: './monocart-report/index.html'
+        }]
   ],
 
   outputDir: `${runOutputDir}/artifacts`,
@@ -47,7 +58,7 @@ export default defineConfig({
     headless: false,
     // Base URL for all tests
     // baseURL: process.env.BASE_URL || 'https://vibetestq-osondemand.orangehrm.com/',
-      baseURL: process.env.BASE_URL || 'http://localhost:3000/',
+    baseURL: process.env.BASE_URL || 'http://localhost:3000/',
     // Collect trace on first retry
     trace: 'on-first-retry',
 
@@ -87,13 +98,9 @@ export default defineConfig({
       name: 'chromium',
       use: {
         // channel: 'chrome',
-          ...devices['Desktop Chrome'],
+        ...devices['Desktop Chrome'],
         // storageState: '.auth/admin.json', // Use the saved auth state for Chromium
       }
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
     }
   ],
 });

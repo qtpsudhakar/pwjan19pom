@@ -12,17 +12,24 @@
     "test:firefox": "npx playwright test --project=firefox",
     "test:webkit": "npx playwright test --project=webkit",
     "codegen": "npx playwright codegen",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "runapi": "npx playwright test --grep @api",
+    "generate:allure": "npx allure generate ./allure-results -o ./allure-report",
+    "open:allure": "npx allure open ./allure-report",
+    "runapiwithallure": "npm run runapi && npm run generate:allure && npm run open:allure"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
     "@types/express": "^5.0.6",
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.19.15",
+    "allure-playwright": "^3.6.0",
+    "monocart-reporter": "^2.10.0",
     "typescript": "^5.7.0"
   },
   "dependencies": {
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "tesseract.js": "^7.0.0",
     "xlsx": "^0.18.5"
   }
 }

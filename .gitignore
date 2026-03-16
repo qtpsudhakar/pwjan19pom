@@ -6,3 +6,6 @@ test-results/
 .env.*
 *.log
 .auth/
+allure-results/
+allure-report/
+monocart-report/
