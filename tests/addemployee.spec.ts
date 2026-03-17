@@ -49,7 +49,7 @@ test.describe('Add Employee Tests', () => {
         await addEmployeePage.verifySuccessMessage('Successfully Saved');
     });
 
-    test('Search Employee Test', { tag: ['@smoke', '@employee'] }, async ({ basePage, loginPage, dashboardPage, employeeListPage }) => {
+    test('Search Employee Test', { tag: ['@smoke', '@employee'] }, async ({ page,basePage, loginPage, dashboardPage, employeeListPage }) => {
         // Navigate to login page and perform login
         // await basePage.navigateTo('/');
         // await loginPage.login('testadmin', 'Vibetestq@123');

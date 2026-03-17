@@ -37,19 +37,28 @@ export default defineConfig({
 
   // Reporter configuration
   reporter: [
-    // ['list',{printSteps: true}],
+    ['list', { printSteps: true }],
     // ['line'],
     // ['dot', { outputFile: `${runOutputDir}/dot-reporter.txt` }],
     // ['html', { outputFolder: `${runOutputDir}/html-report`, open: 'never' }],
     //  ['blob',{ outputFile: `${runOutputDir}/blob-reporter.txt` }],
     // ['json', { outputFile: `${runOutputDir}/json-reporter.json` }],
-    // ['junit', { outputFile: `${runOutputDir}/junit-reporter.xml` }],
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['junit', { outputFile: 'results.xml' }],
     // ['./my-awesome-reporter.ts'],
     // ['allure-playwright'],
-    ['monocart-reporter', {  
-            name: "My Test Report",
-            outputFile: './monocart-report/index.html'
-        }]
+    // ['monocart-reporter', {  
+    //         name: "My Test Report",
+    //         outputFile: './monocart-report/index.html'
+    //     }],
+    // ['@reportportal/agent-js-playwright', {
+    //   apiKey: 'vibetestq_4RThNeA9S1i5kLrP-NEZ8t0RfoPGYOFFDlA2lj2HJp6F4H4Qk_qpBcudi9CWnWIR',
+    //   endpoint: 'http://localhost:8080/api/v2',
+    //   project: 'vibetestq_project',
+    //   launch: 'Playwright Launch',
+    //   includeTestSteps: true,
+    //   skippedIssue: false,
+    // }]
   ],
 
   outputDir: `${runOutputDir}/artifacts`,

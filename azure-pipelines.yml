@@ -1,0 +1,41 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'
+
+- script: npm ci
+  displayName: Install dependencies
+
+- script: npx playwright install --with-deps
+  displayName: Install browsers
+
+- script: npx playwright test --grep @api
+  displayName: Run tests
+
+# Publish test results (Azure UI)
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/results.xml'
+    failTaskOnFailedTests: true
+  displayName: Publish Test Results
+
+# Publish Playwright HTML report
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: 'playwright-report'
+    artifactName: 'PlaywrightReport'
+  displayName: Upload HTML Report
+
+# Publish traces/screenshots if needed
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: 'test-results'
+    artifactName: 'TestResultsFiles'
+  displayName: Upload Raw Results
