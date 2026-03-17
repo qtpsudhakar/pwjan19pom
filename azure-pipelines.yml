@@ -5,6 +5,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- checkout: self
+
 - task: NodeTool@0
   inputs:
     versionSpec: '18.x'
@@ -18,24 +20,21 @@ steps:
 - script: npx playwright test --grep @api
   displayName: Run tests
 
-# Publish test results (Azure UI)
 - task: PublishTestResults@2
+  condition: succeededOrFailed()
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: '**/results.xml'
     failTaskOnFailedTests: true
-  displayName: Publish Test Results
 
-# Publish Playwright HTML report
 - task: PublishBuildArtifacts@1
+  condition: succeededOrFailed()
   inputs:
     pathToPublish: 'playwright-report'
     artifactName: 'PlaywrightReport'
-  displayName: Upload HTML Report
 
-# Publish traces/screenshots if needed
 - task: PublishBuildArtifacts@1
+  condition: succeededOrFailed()
   inputs:
     pathToPublish: 'test-results'
     artifactName: 'TestResultsFiles'
-  displayName: Upload Raw Results
