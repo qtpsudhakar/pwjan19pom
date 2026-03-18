@@ -48,14 +48,6 @@ jobs:
           echo "No previous history found — first run baseline"
         fi
 
-    # ─── Start local API server ───────────────────────────────────────────────
-
-    - name: Start API server
-      run: node src/server.js > server.log 2>&1 &
-
-    - name: Wait for server to be ready
-      run: npx wait-on http://localhost:3000 --timeout 30000 || (echo "=== Server startup log ===" && cat server.log && exit 1)
-
     # ─── Run tests ───────────────────────────────────────────────────────────
 
     - name: Run Playwright tests
