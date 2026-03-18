@@ -74,7 +74,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v4
       if: always()
       with:
-        personal_token: ${{ secrets.GH_PAT_NEW }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_branch: gh-pages
         publish_dir: gh-pages-deploy
         keep_files: true
