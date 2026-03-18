@@ -51,8 +51,9 @@ jobs:
       run: |
         if [ -d "gh-pages/allure/history" ]; then
           mkdir -p allure-results/history
-          cp -r gh-pages/allure/history allure-results/
-          echo "Allure history restored from previous run"
+          cp -r gh-pages/allure/history/. allure-results/history/
+          echo "History files copied:"
+          ls allure-results/history/
         else
           echo "No previous history found — first run baseline"
         fi
