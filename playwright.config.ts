@@ -64,7 +64,7 @@ export default defineConfig({
   outputDir: `${runOutputDir}/artifacts`,
   // Shared settings for all projects
   use: {
-    headless: false,
+    headless: !!process.env.CI,
     // Base URL for all tests
     baseURL: process.env.BASE_URL || 'https://vibetestq-osondemand.orangehrm.com/',
     // baseURL: process.env.BASE_URL || 'http://localhost:3000/',
