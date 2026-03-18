@@ -9,3 +9,5 @@ test-results/
 allure-results/
 allure-report/
 monocart-report/
+results/
+results.xml

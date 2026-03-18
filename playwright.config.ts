@@ -44,7 +44,7 @@ export default defineConfig({
     //  ['blob',{ outputFile: `${runOutputDir}/blob-reporter.txt` }],
     // ['json', { outputFile: `${runOutputDir}/json-reporter.json` }],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['junit', { outputFile: 'results.xml' }],
+    // ['junit', { outputFile: 'results.xml' }],
     // ['./my-awesome-reporter.ts'],
     ['allure-playwright'],
     // ['monocart-reporter', {  
@@ -66,8 +66,8 @@ export default defineConfig({
   use: {
     headless: process.env.PW_HEADLESS === 'true',
     // Base URL for all tests
-    // baseURL: process.env.BASE_URL || 'https://vibetestq-osondemand.orangehrm.com/',
-    baseURL: process.env.BASE_URL || 'http://localhost:3000/',
+    baseURL: process.env.BASE_URL || 'https://vibetestq-osondemand.orangehrm.com/',
+    // baseURL: process.env.BASE_URL || 'http://localhost:3000/',
     // Collect trace on first retry
     trace: 'on-first-retry',
 
@@ -97,12 +97,12 @@ export default defineConfig({
 
   // Run your local dev server before starting the tests
   // In CI, the server is started explicitly in the workflow step so crash logs are visible.
-  webServer: process.env.CI ? undefined : {
-    command: 'node src/server.js',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
+  // webServer: process.env.CI ? undefined : {
+  //   command: 'node src/server.js',
+  //   url: 'http://localhost:3000',
+  //   reuseExistingServer: true,
+  //   timeout: 120_000,
+  // },
 
   // Browser projects
   projects: [
