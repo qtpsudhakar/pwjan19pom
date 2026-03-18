@@ -39,6 +39,14 @@ jobs:
         ref: gh-pages
         path: gh-pages
 
+    # ─── Run tests ───────────────────────────────────────────────────────────
+
+    - name: Run Playwright tests
+      run: npx playwright test --grep @login
+      env:
+        CI: true
+      continue-on-error: true  # Publish report even when tests fail
+
     - name: Copy Allure history from previous run
       run: |
         if [ -d "gh-pages/allure/history" ]; then
@@ -48,13 +56,6 @@ jobs:
         else
           echo "No previous history found — first run baseline"
         fi
-    # ─── Run tests ───────────────────────────────────────────────────────────
-
-    - name: Run Playwright tests
-      run: npx playwright test --grep @login
-      env:
-        CI: true
-      continue-on-error: true  # Publish report even when tests fail
 
     # ─── Generate Allure Report ───────────────────────────────────────────────
 
