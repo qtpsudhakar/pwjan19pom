@@ -100,6 +100,7 @@ export default defineConfig({
     command: 'node src/server.js',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
   },
 
   // Browser projects
