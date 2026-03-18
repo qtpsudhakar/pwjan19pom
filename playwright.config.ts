@@ -46,7 +46,7 @@ export default defineConfig({
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     // ['junit', { outputFile: 'results.xml' }],
     // ['./my-awesome-reporter.ts'],
-    ['allure-playwright'],
+    ['allure-playwright', { outputFolder: 'allure-results', detail: true, suiteTitle: true }],
     // ['monocart-reporter', {  
     //         name: "My Test Report",
     //         outputFile: './monocart-report/index.html'
