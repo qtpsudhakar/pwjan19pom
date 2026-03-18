@@ -29,7 +29,8 @@
     "@types/node": "^22.19.15",
     "allure-playwright": "^3.6.0",
     "monocart-reporter": "^2.10.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "wait-on": "^9.0.4"
   },
   "dependencies": {
     "express": "^5.2.1",

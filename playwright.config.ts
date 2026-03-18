@@ -96,10 +96,11 @@ export default defineConfig({
   // globalTeardown: './global-teardown.ts',
 
   // Run your local dev server before starting the tests
-  webServer: {
+  // In CI, the server is started explicitly in the workflow step so crash logs are visible.
+  webServer: process.env.CI ? undefined : {
     command: 'node src/server.js',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120_000,
   },
 
