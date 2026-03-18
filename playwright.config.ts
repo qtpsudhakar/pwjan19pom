@@ -88,7 +88,7 @@ export default defineConfig({
 
     // Default navigation timeout (ms)
     navigationTimeout: 30_000,
-    storageState: '.auth/admin.json', // Use the saved auth state for all tests
+    // storageState: '.auth/admin.json', // Use the saved auth state for all tests
   },
 
 
