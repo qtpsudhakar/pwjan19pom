@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '../fixtures/basetest';
 
 
-test.describe('Login Tests',{tag:['@smoke','@login']}, () => {
+test.describe('Login Tests',{tag:['@smoke','@login', '@ci']}, () => {
     test('Valid Login Test', async ({ basePage, loginPage, dashboardPage }) => {
         // Navigate to login page and perform login
         await basePage.navigateTo('/');

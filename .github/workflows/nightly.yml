@@ -41,7 +41,7 @@ jobs:
     # ─── Run tests ───────────────────────────────────────────────────────────
 
     - name: Run Playwright tests
-      run: npx playwright test --grep @login
+      run: npx playwright test --grep @ci
       env:
         CI: true
       continue-on-error: true  # Publish report even when tests fail

@@ -3,7 +3,7 @@ import { test } from '../fixtures/basetest';
 
 // test.describe.configure({ mode: 'serial' });
 
-test.describe('Add Employee Tests', () => {
+test.describe('Add Employee Tests',{tag: ['@ci']}, () => {
 
     test.beforeAll(async ({ }) => {
         console.log('This runs once before all tests in this describe block');
@@ -14,10 +14,10 @@ test.describe('Add Employee Tests', () => {
     });
 
     // Login before each test in this describe block
-    // test.beforeEach(async ({basePage, loginPage }) => {
-    //     await basePage.navigateTo('/');
-    //     await loginPage.login('testadmin', 'Vibetestq@123');
-    // });
+    test.beforeEach(async ({basePage, loginPage }) => {
+        await basePage.navigateTo('/');
+        await loginPage.login('testadmin', 'Vibetestq@123');
+    });
 
     test.afterEach(async ({ basePage }) => {
         
