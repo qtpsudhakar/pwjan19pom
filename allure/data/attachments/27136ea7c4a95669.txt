@@ -1,0 +1,19 @@
+This runs once per worker
+This runs once before all tests in this describe block
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM link
+Clicked on Add button
+Navigated to Add Employee page by clicking Add button
+Filled value: John in First Name textbox
+Filled value: Doe in Last Name textbox
+Filled value: EMP551769 in Employee ID field
+Clicked on Save button
+Assertion passed: text "Successfully Saved" is visible on the page
+Add Employee Tests
+Browser closed successfully
