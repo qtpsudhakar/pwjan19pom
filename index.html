@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Reports</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 80px auto; text-align: center; }
+    h1 { color: #333; }
+    .cards { display: flex; gap: 24px; justify-content: center; margin-top: 40px; }
+    a.card { display: block; padding: 32px 40px; border-radius: 8px; text-decoration: none;
+             font-size: 18px; font-weight: bold; color: white; }
+    .allure  { background: #e85a4f; }
+    .latest  { background: #4f8ee8; }
+    a.card:hover { opacity: 0.85; }
+    p { color: #666; font-size: 14px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Playwright Test Reports</h1>
+  <div class="cards">
+    <div>
+      <a class="card allure" href="allure/index.html">Allure Report</a>
+      <p>History &amp; trend charts</p>
+    </div>
+    <div>
+      <a class="card latest" href="latest/index.html">Latest Run</a>
+      <p>Screenshots &amp; traces</p>
+    </div>
+  </div>
+</body>
+</html>
