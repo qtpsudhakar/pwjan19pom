@@ -1,3 +1,5 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","4245","Invalid Login Test","chromium","2026-03-18","passed","2026-03-18","Login Tests","login.spec.ts","",""
-"","5863","Valid Login Test","chromium","2026-03-18","passed","2026-03-18","Login Tests","login.spec.ts","",""
+"","7128","Search Employee Test","chromium","2026-03-19","passed","2026-03-19","Add Employee Tests","addemployee.spec.ts","",""
+"","11731","Add Employee Tests","chromium","2026-03-19","passed","2026-03-19","Add Employee Tests","addemployee.spec.ts","",""
+"","5213","Valid Login Test","chromium","2026-03-19","passed","2026-03-19","Login Tests","login.spec.ts","",""
+"","3390","Invalid Login Test","chromium","2026-03-19","passed","2026-03-19","Login Tests","login.spec.ts","",""

@@ -1,0 +1,14 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM link
+Clicked on Include filter dropdown
+Clicked on Option for 'Current and Past Employees' in Include filter dropdown
+Employee 'John' found in search results
+Search Employee Test
+Browser closed successfully
+This runs once after all tests in this describe block
