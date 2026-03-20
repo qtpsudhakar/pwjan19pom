@@ -5,6 +5,8 @@ import { LoginPage } from '@pages/LoginPage';
 import { DashboardPage } from '@pages/DashboardPage';
 import { EmployeeListPage } from '@pages/EmployeeListPage';
 import { AddEmployeePage } from '@pages/AddEmployeePage';
+import { PIMPage } from '@pages/PIMPage';
+import { EmployeeProfilePage } from '@pages/EmployeeProfilePage';
 // Extend the base test to include a fixture for the BasePage
 
 export const test = baseTest.extend<{
@@ -14,6 +16,8 @@ export const test = baseTest.extend<{
     dashboardPage: DashboardPage;
     addEmployeePage: AddEmployeePage;
     employeeListPage: EmployeeListPage;
+    pimPage: PIMPage;
+    employeeProfilePage: EmployeeProfilePage;
     forEachTest: void; // Example of a fixture variable that can be used in tests
 }, { forEachWorker: void; }>({
     // Define fixture functionality here
@@ -36,6 +40,14 @@ export const test = baseTest.extend<{
     employeeListPage: async ({ page }, use) => {
         const employeeListPage = new EmployeeListPage(page);
         await use(employeeListPage);
+    },
+    pimPage: async ({ page }, use) => {
+        const pimPage = new PIMPage(page);
+        await use(pimPage);
+    },
+    employeeProfilePage: async ({ page }, use) => {
+        const employeeProfilePage = new EmployeeProfilePage(page);
+        await use(employeeProfilePage);
     },
 
     forEachTest: [async ({ page }, use) => {

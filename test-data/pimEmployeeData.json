@@ -1,0 +1,67 @@
+{
+  "employees": [
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "middleName": null,
+      "employeeId": "EMP001",
+      "createLogin": true,
+      "username": "johndoe",
+      "password": "Test@123"
+    },
+    {
+      "firstName": "Jane", 
+      "lastName": "Smith",
+      "middleName": "Mary",
+      "employeeId": "EMP002",
+      "createLogin": false
+    },
+    {
+      "firstName": "Michael",
+      "lastName": "Johnson",
+      "middleName": null,
+      "employeeId": "EMP003",
+      "createLogin": true,
+      "username": "mjohnson",
+      "password": "Secure@456"
+    },
+    {
+      "firstName": "Sarah",
+      "lastName": "Wilson",
+      "middleName": "Kate",
+      "employeeId": "EMP004",
+      "createLogin": false
+    },
+    {
+      "firstName": "David",
+      "lastName": "Brown",
+      "middleName": null,
+      "employeeId": "EMP005",
+      "createLogin": true,
+      "username": "dbrown",
+      "password": "Strong@789"
+    }
+  ],
+  "searchCriteria": [
+    {
+      "type": "employeeName",
+      "value": "John Doe",
+      "expectedResults": 1
+    },
+    {
+      "type": "employeeId", 
+      "value": "EMP001",
+      "expectedResults": 1
+    },
+    {
+      "type": "invalidName",
+      "value": "NonExistent User",
+      "expectedResults": 0
+    },
+    {
+      "type": "partialName",
+      "value": "Smith",
+      "expectedResults": 1
+    }
+  ]
+}
