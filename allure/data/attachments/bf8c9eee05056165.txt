@@ -1,0 +1,13 @@
+This runs once per worker
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Clicked on Employment Status dropdown
+TC-PIM-006: Employment Status Filter
+Browser closed successfully

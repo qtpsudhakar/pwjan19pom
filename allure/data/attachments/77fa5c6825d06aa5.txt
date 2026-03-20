@@ -1,0 +1,5 @@
+Error clicking on Employment status option: Full-Time Permanent: locator.click: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('//div[@role=\'option\']//span[text()=\'Full-Time Permanent\']')
+
+❌ PERSISTENT FAILURE: "TC-PIM-006: Employment Status Filter" still failing on retry 2

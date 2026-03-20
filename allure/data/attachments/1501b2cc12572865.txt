@@ -1,0 +1,15 @@
+This runs once per worker
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Filled value: Test Employee in Employee name input field
+Clicked on Search button
+Assertion passed: Employee table is visible
+TC-PIM-002: Search Employee by Name
+Browser closed successfully
