@@ -47,8 +47,8 @@ export class PIMPage extends BasePage {
         
         // Results and table
         this.employeeTable = this.page.locator('.oxd-table').describe('Employee table');
-        this.recordsFoundText = this.page.locator('.oxd-text--span').describe('Records found text');
-        this.noRecordsFoundMessage = this.page.getByText('No Records Found').describe('No records found message');
+        this.recordsFoundText = this.page.locator('.orangehrm-paper-container .oxd-text--span').filter({ hasText: 'Records Found' }).describe('Records found text');
+        this.noRecordsFoundMessage = this.page.locator('.orangehrm-paper-container .oxd-text--span').filter({ hasText: 'No Records Found' }).describe('No records found message');
         this.firstEmployeeRow = this.page.locator('.oxd-table-body .oxd-table-row').first().describe('First employee row');
         
         // Navigation
@@ -75,6 +75,18 @@ export class PIMPage extends BasePage {
 
     async selectEmploymentStatus(status: string): Promise<void> {
         await this.webHelpers.clickElement(this.employmentStatusDropdown);
+        
+        // Check if dropdown has options or shows "No Records Found"
+        const noRecordsOption = this.page.locator('//div[@role="option" and contains(text(), "No Records Found")]');
+        const noRecordsExists = await noRecordsOption.isVisible().catch(() => false);
+        
+        if (noRecordsExists) {
+            console.log(`[err] Employment Status dropdown shows "No Records Found" - no employment statuses configured in system`);
+            // Click elsewhere to close the dropdown
+            await this.page.locator('h5:has-text("Employee Information")').click();
+            throw new Error(`Employment Status dropdown shows "No Records Found" - system not configured with employment status data`);
+        }
+        
         const option = this.page.locator(`//div[@role='option']//span[text()='${status}']`).describe(`Employment status option: ${status}`);
         await this.webHelpers.clickElement(option);
     }

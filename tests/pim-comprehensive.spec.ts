@@ -34,6 +34,10 @@ test.describe('PIM - Comprehensive Test Suite', { tag: ['@pim', '@comprehensive'
             annotation: [{ type: 'testId', description: 'PIM-SMOKE-001' }]
         },
         async ({ dashboardPage, pimPage, addEmployeePage }) => {
+            //Read Test ID from annotation
+            const testId = test.info().annotations.find(a => a.type === 'testId')?.description;
+            console.log(`Executing test case: ${testId}`);
+
             // Verify we can access PIM module
             await dashboardPage.verifyDashboardPageExists();
             await pimPage.navigateToEmployeeList();
