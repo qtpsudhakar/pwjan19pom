@@ -1,0 +1,14 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Clicked on Add employee button
+Clicked on Save button
+Verified required field validation triggered
+TC-PIM-012: Required Field Validation
+Browser closed successfully
