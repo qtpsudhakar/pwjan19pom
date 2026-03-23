@@ -56,4 +56,4 @@ export class SimplePlaywrightWorld extends World implements SimpleWorld {
 }
 
 // Enable this line when using Simple approach (no POM)
-setWorldConstructor(SimplePlaywrightWorld);
+// setWorldConstructor(SimplePlaywrightWorld);

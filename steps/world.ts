@@ -13,14 +13,14 @@ export interface CustomWorld extends World {
   context?: BrowserContext;
   page?: Page;
   
-  // Page objects - same as in basetest.ts fixtures
-  basePage?: BasePage;
-  loginPage?: LoginPage;
-  dashboardPage?: DashboardPage;
-  addEmployeePage?: AddEmployeePage;
-  employeeListPage?: EmployeeListPage;
-  pimPage?: PIMPage;
-  employeeProfilePage?: EmployeeProfilePage;
+  // Page objects - always available after init()
+  basePage: BasePage;
+  loginPage: LoginPage;
+  dashboardPage: DashboardPage;
+  addEmployeePage: AddEmployeePage;
+  employeeListPage: EmployeeListPage;
+  pimPage: PIMPage;
+  employeeProfilePage: EmployeeProfilePage;
 }
 
 export class CustomPlaywrightWorld extends World implements CustomWorld {
@@ -28,14 +28,14 @@ export class CustomPlaywrightWorld extends World implements CustomWorld {
   context?: BrowserContext;
   page?: Page;
   
-  // Page objects
-  basePage?: BasePage;
-  loginPage?: LoginPage;
-  dashboardPage?: DashboardPage;
-  addEmployeePage?: AddEmployeePage;
-  employeeListPage?: EmployeeListPage;
-  pimPage?: PIMPage;
-  employeeProfilePage?: EmployeeProfilePage;
+  // Page objects - declare as definite assignment
+  basePage!: BasePage;
+  loginPage!: LoginPage;
+  dashboardPage!: DashboardPage;
+  addEmployeePage!: AddEmployeePage;
+  employeeListPage!: EmployeeListPage;
+  pimPage!: PIMPage;
+  employeeProfilePage!: EmployeeProfilePage;
 
   constructor(options: IWorldOptions) {
     super(options);
@@ -70,4 +70,4 @@ export class CustomPlaywrightWorld extends World implements CustomWorld {
 }
 
 // Enable this line when using POM approach (with page objects)
-// setWorldConstructor(CustomPlaywrightWorld);
+setWorldConstructor(CustomPlaywrightWorld);

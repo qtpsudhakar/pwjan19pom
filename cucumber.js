@@ -6,11 +6,14 @@ module.exports = {
     // Step definitions location
     // CHOOSE ONE OF THESE APPROACHES:
     
-    // Option 1: Use POM approach (with page objects)
-    require: ['steps/**/login.steps.ts', 'steps/world.ts'],
+    // Option 1: Use POM approach (with page objects) - CURRENTLY ACTIVE
+    require: ['steps/login-pom.steps.ts', 'steps/world.ts'],
     
     // Option 2: Use Simple approach (without POM - direct Playwright)
     // require: ['steps/login-simple.steps.ts', 'steps/simpleWorld.ts'],
+    
+    // Option 3: Use Basic approach (no world, direct variables)
+    // require: ['steps/**/login.steps.ts'],
     
     // World parameters
     worldParameters: {
