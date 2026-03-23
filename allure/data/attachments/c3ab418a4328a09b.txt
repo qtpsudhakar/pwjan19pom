@@ -1,0 +1,17 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Assertion passed: Employee search form is visible
+Assertion passed: Employee name input field is visible
+Assertion passed: Search button is visible
+Assertion passed: Reset button is visible
+Assertion passed: Employee table is visible
+Assertion passed: Add employee button is visible
+TC-PIM-001: Display Employee List
+Browser closed successfully

@@ -1,0 +1,16 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Clicked on Add employee button
+Filled value: InvalidPhoto326384 in First Name textbox
+Filled value: Test326384 in Last Name textbox
+Clicked on Save button
+Tested invalid photo upload scenario
+TC-PIM-013: Invalid Profile Picture Upload
+Browser closed successfully
