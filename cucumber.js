@@ -4,7 +4,13 @@ module.exports = {
     paths: ['features/**/login.feature'],
     
     // Step definitions location
-    require: ['steps/**/login.steps.ts'],
+    // CHOOSE ONE OF THESE APPROACHES:
+    
+    // Option 1: Use POM approach (with page objects)
+    require: ['steps/**/login.steps.ts', 'steps/world.ts'],
+    
+    // Option 2: Use Simple approach (without POM - direct Playwright)
+    // require: ['steps/login-simple.steps.ts', 'steps/simpleWorld.ts'],
     
     // World parameters
     worldParameters: {

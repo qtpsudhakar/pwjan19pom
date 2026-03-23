@@ -69,4 +69,5 @@ export class CustomPlaywrightWorld extends World implements CustomWorld {
   }
 }
 
-setWorldConstructor(CustomPlaywrightWorld);
+// Enable this line when using POM approach (with page objects)
+// setWorldConstructor(CustomPlaywrightWorld);
