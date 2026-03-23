@@ -11,3 +11,9 @@ allure-report/
 monocart-report/
 results/
 results.xml
+cucumber-report.json
+cucumber-report.html
+cucumber-results.json
+cucumber-results/
+cucumber-html-reports/
+cucumber-json-reports/
