@@ -1,0 +1,6 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: invaliduser in Username input field
+Filled value: invalidpassword in Password input field
+Clicked on Login button
+Attempted login with credentials: invaliduser / invalidpassword

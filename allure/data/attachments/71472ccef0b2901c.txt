@@ -1,0 +1,16 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Clicked on Include filter dropdown
+Clicked on Include filter option: Current and Past Employees
+Clicked on Search button
+Assertion passed: Employee table is visible
+Assertion passed: Records found text is visible
+TC-PIM-007: Include Filter Functionality
+Browser closed successfully

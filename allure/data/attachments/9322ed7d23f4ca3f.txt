@@ -1,0 +1,16 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Clicked on Add employee button
+Filled value: John192588 in First Name textbox
+Filled value: Doe192588 in Last Name textbox
+Clicked on Save button
+Assertion passed: text "Successfully Saved" is visible on the page
+TC-PIM-009: Add Employee - All Personal Details
+Browser closed successfully
