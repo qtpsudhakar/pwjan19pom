@@ -1,0 +1,25 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Clicked on Add employee button
+Filled value: Duplicate255910 in First Name textbox
+Filled value: Test1 in Last Name textbox
+Filled value: 255910 in Employee ID field
+Clicked on Save button
+Assertion passed: text "Successfully Saved" is visible on the page
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Clicked on Add employee button
+Filled value: Duplicate2 in First Name textbox
+Filled value: Test2 in Last Name textbox
+Filled value: 255910 in Employee ID field
+Clicked on Save button
+Tested duplicate employee ID scenario
+TC-PIM-014: Duplicate Employee ID Handling
+Browser closed successfully

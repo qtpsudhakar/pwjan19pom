@@ -1,0 +1,18 @@
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+Verified that we are on the Dashboard page header
+Clicked on PIM menu link
+Clicked on Employee List menu item
+Filled value: Test Name in Employee name input field
+Filled value: 123 in Employee ID input field
+Clicked on Reset button
+Assertion passed: Employee search form is visible
+Assertion passed: Employee name input field is visible
+Assertion passed: Search button is visible
+Assertion passed: Reset button is visible
+TC-PIM-005: Reset Search Filters
+Browser closed successfully
