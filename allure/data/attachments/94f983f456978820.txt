@@ -1,0 +1,5 @@
+This runs once per worker
+Navigated to URL: /
+Navigated to URL: /
+TC-PIM-008: Add Employee - Required Fields Only
+Browser closed successfully
