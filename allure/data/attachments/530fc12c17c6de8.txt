@@ -1,0 +1,5 @@
+Error filling value: locator.clear: Timeout 10000ms exceeded.
+Call log:
+  - waiting for getByRole('textbox', { name: 'Username' })
+ in Username input field
+❌ PERSISTENT FAILURE: "TC-PIM-008: Add Employee - Required Fields Only" still failing on retry 1

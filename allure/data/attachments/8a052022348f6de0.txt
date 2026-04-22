@@ -1,0 +1,5 @@
+This runs once per worker
+Navigated to URL: /
+Navigated to URL: /
+TC-PIM-009: Add Employee - All Personal Details
+Browser closed successfully

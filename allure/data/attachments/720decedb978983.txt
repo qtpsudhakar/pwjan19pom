@@ -1,0 +1,5 @@
+This runs once per worker
+Navigated to URL: /
+Navigated to URL: /
+TC-PIM-002: Search Employee by Name
+Browser closed successfully
