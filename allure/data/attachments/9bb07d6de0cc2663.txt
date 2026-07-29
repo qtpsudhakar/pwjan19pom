@@ -1,0 +1,5 @@
+This runs once per worker
+Navigated to URL: /
+Navigated to URL: /
+TC-PIM-011: Add Employee - Profile Picture Upload
+Browser closed successfully

@@ -1,0 +1,4 @@
+Error filling value: locator.clear: Timeout 10000ms exceeded.
+Call log:
+  - waiting for getByRole('textbox', { name: 'Username' })
+ in Username input field
