@@ -1,0 +1,9 @@
+This runs once per worker
+Navigated to URL: /
+Navigated to URL: /
+Filled value: testadmin in Username input field
+Filled value: Vibetestq@123 in Password input field
+Clicked on Login button
+Attempted login with credentials: testadmin / Vibetestq@123
+TC-PIM-014: Duplicate Employee ID Handling
+Browser closed successfully
